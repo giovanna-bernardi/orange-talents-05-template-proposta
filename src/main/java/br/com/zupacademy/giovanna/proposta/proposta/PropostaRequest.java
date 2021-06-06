@@ -22,13 +22,6 @@ public class PropostaRequest {
     @NotNull @Positive
     private BigDecimal salarioBruto;
 
-
-    /*documento do solicitante deve ser obrigatório e válido
-    email não pode ser vazio, nulo ou inválido
-    nome não pode ser vazio ou nulo
-    endereço não pode ser vazio ou nulo
-    salário bruto não pode ser vazio, nulo ou negativo*/
-
     public PropostaRequest(@NotBlank @CPFouCNPJ String documento,
                            @NotBlank @Email String email,
                            @NotBlank String nome,
@@ -43,6 +36,10 @@ public class PropostaRequest {
 
     public Proposta toModel() {
         return new Proposta(this.documento, this.email, this.nome, this.endereco, this.salarioBruto);
+    }
+
+    public String getDocumento() {
+        return documento;
     }
 
     @Override
