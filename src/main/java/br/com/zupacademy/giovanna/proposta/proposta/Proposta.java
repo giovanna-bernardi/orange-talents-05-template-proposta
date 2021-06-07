@@ -12,6 +12,10 @@ import java.math.BigDecimal;
 @Entity
 public class Proposta {
 
+    public enum StatusProposta {
+        ELEGIVEL, NAO_ELEGIVEL
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,6 +40,9 @@ public class Proposta {
     @Column(nullable = false)
     private BigDecimal salarioBruto;
 
+    @Enumerated(EnumType.STRING)
+    private StatusProposta status;
+
     /**
      * For Hibernate use only
      */
@@ -57,5 +64,22 @@ public class Proposta {
 
     public Long getId() {
         return id;
+    }
+
+    public void setStatus(StatusProposta status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Proposta{" +
+                "id=" + id +
+                ", documento='" + documento + '\'' +
+                ", email='" + email + '\'' +
+                ", nome='" + nome + '\'' +
+                ", endereco='" + endereco + '\'' +
+                ", salarioBruto=" + salarioBruto +
+                ", status=" + status +
+                '}';
     }
 }

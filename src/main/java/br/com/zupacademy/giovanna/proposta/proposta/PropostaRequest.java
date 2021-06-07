@@ -42,6 +42,10 @@ public class PropostaRequest {
         return documento;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
     @Override
     public String toString() {
         return "PropostaRequest{" +
