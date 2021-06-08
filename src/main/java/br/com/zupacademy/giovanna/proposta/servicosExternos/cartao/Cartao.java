@@ -46,4 +46,16 @@ public class Cartao {
         this.nomeTitular = nomeTitular;
         this.proposta = proposta;
     }
+
+    public String getNumeroCartao() {
+        return numeroCartao;
+    }
+
+    public LocalDateTime getDataEmissao() {
+        return dataEmissao;
+    }
+
+    public String getNomeTitular() {
+        return nomeTitular;
+    }
 }

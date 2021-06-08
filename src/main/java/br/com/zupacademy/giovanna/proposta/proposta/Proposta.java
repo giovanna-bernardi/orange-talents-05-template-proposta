@@ -67,18 +67,6 @@ public class Proposta {
         this.salarioBruto = salarioBruto;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getDocumento() {
-        return documento;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
     public void atualizaStatus(StatusProposta status) {
         this.status = status;
     }
@@ -91,6 +79,38 @@ public class Proposta {
 
     public boolean aprovada() {
         return this.status.equals(StatusProposta.ELEGIVEL);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public BigDecimal getSalarioBruto() {
+        return salarioBruto;
+    }
+
+    public StatusProposta getStatus() {
+        return status;
+    }
+
+    public Cartao getCartao() {
+        return cartao;
     }
 
     @Override

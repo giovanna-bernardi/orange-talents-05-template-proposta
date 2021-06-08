@@ -5,10 +5,7 @@ import br.com.zupacademy.giovanna.proposta.servicosExternos.analiseFinanceira.An
 import br.com.zupacademy.giovanna.proposta.servicosExternos.analiseFinanceira.AnaliseFinanceiraRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import static br.com.zupacademy.giovanna.proposta.proposta.Proposta.*;
 
@@ -16,6 +13,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/propostas")
@@ -49,6 +47,16 @@ public class PropostaController {
 
         URI uri = uriComponentsBuilder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri();
         return ResponseEntity.created(uri).build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> detalheProposta(@PathVariable @Valid Long id){
+        Optional<Proposta> proposta = propostaRepository.findById(id);
+        if(proposta.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        AcompanhamentoProposta propostaResponse = new AcompanhamentoProposta(proposta.get());
+        return ResponseEntity.ok(propostaResponse);
     }
 
     private boolean documentoJaExiste(String documento) {
