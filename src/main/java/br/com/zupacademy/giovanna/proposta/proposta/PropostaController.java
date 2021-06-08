@@ -1,7 +1,8 @@
 package br.com.zupacademy.giovanna.proposta.proposta;
 
 import br.com.zupacademy.giovanna.proposta.exceptions.ErrorResponse;
-import feign.FeignException;
+import br.com.zupacademy.giovanna.proposta.servicosExternos.analiseFinanceira.AnalisaProposta;
+import br.com.zupacademy.giovanna.proposta.servicosExternos.analiseFinanceira.AnaliseFinanceiraRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+import static br.com.zupacademy.giovanna.proposta.proposta.Proposta.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -20,11 +22,12 @@ import java.util.Arrays;
 public class PropostaController {
 
     private final PropostaRepository propostaRepository;
-    private final AnaliseFinanceiraClient client;
+    private final AnalisaProposta analisaProposta;
 
-    public PropostaController(PropostaRepository propostaRepository, AnaliseFinanceiraClient client) {
+    public PropostaController(PropostaRepository propostaRepository,
+                              AnalisaProposta analisaProposta) {
         this.propostaRepository = propostaRepository;
-        this.client = client;
+        this.analisaProposta = analisaProposta;
     }
 
     @PostMapping
@@ -40,7 +43,8 @@ public class PropostaController {
         salvaProposta(proposta);
 
         AnaliseFinanceiraRequest pedidoAvaliacao = new AnaliseFinanceiraRequest(request.getDocumento(), request.getNome(), String.valueOf(proposta.getId()));
-        atualizaStatusDaProposta(pedidoAvaliacao, proposta);
+        StatusProposta resultadoAvaliacao = analisaProposta.verifica(pedidoAvaliacao);
+        proposta.atualizaStatus(resultadoAvaliacao);
         salvaProposta(proposta);
 
         URI uri = uriComponentsBuilder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri();
@@ -54,25 +58,6 @@ public class PropostaController {
     @Transactional
     private void salvaProposta(Proposta proposta) {
         propostaRepository.save(proposta);
-    }
-
-    private void atualizaStatusDaProposta(AnaliseFinanceiraRequest pedidoAvaliacao, Proposta proposta) {
-        try {
-            AnaliseFinanceiraResponse resultadoAvaliacao = client.verificaStatusSolicitante(pedidoAvaliacao);
-            proposta.setStatus(resultadoAvaliacao.getResultadoSolicitacao());
-        } catch (FeignException e) {
-            if (e.status() == HttpStatus.UNPROCESSABLE_ENTITY.value()) {
-                String resultadoSolicitacao = Arrays.stream(e.getMessage().split(","))
-                        .filter(m -> m.startsWith("\"resultadoSolicitacao\""))
-                        .reduce("", (p, m) -> {
-                            int startIndex = m.indexOf(":") + 2; // tira as aspas
-                            int endIndex = m.length() - 1; // tira as aspas
-                            return m.substring(startIndex, endIndex);
-                        });
-                StatusAnaliseFinanceira status = StatusAnaliseFinanceira.valueOf(resultadoSolicitacao);
-                proposta.setStatus(status.toStatusProposta());
-            }
-        }
     }
 
 }

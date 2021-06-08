@@ -1,6 +1,8 @@
 package br.com.zupacademy.giovanna.proposta.proposta;
 
+import br.com.zupacademy.giovanna.proposta.servicosExternos.cartao.Cartao;
 import br.com.zupacademy.giovanna.proposta.validations.CPFouCNPJ;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -43,6 +45,9 @@ public class Proposta {
     @Enumerated(EnumType.STRING)
     private StatusProposta status;
 
+    @OneToOne(cascade = CascadeType.MERGE)
+    private Cartao cartao;
+
     /**
      * For Hibernate use only
      */
@@ -66,8 +71,26 @@ public class Proposta {
         return id;
     }
 
-    public void setStatus(StatusProposta status) {
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void atualizaStatus(StatusProposta status) {
         this.status = status;
+    }
+
+    public void associaCartao(Cartao cartao) {
+        Assert.isTrue(this.aprovada(), "Não se pode associar um cartão a uma proposta não aprovada.");
+        Assert.isTrue(this.cartao == null, "Esta proposta já possui um cartão associado a ela");
+        this.cartao = cartao;
+    }
+
+    public boolean aprovada() {
+        return this.status.equals(StatusProposta.ELEGIVEL);
     }
 
     @Override

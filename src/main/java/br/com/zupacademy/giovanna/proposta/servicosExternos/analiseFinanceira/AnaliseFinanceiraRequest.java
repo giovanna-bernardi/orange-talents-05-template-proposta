@@ -1,4 +1,4 @@
-package br.com.zupacademy.giovanna.proposta.proposta;
+package br.com.zupacademy.giovanna.proposta.servicosExternos.analiseFinanceira;
 
 public class AnaliseFinanceiraRequest {
 
