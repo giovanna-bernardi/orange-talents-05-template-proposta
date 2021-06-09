@@ -22,11 +22,29 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
 
+  proposta:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    container_name: proposta
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on:
+      - mysql
+      - analise
+      - contas
+    environment:
+      ANALISE_FINANCEIRA_URL: "http://analise:9999"
+      CARTAO_URL: "http://contas:8888"
+      MYSQL_URL: jdbc:mysql://mysql/proposta
+
   mysql:
     image: mysql
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: proposta
     ports:
       - 3306:3306
     volumes:
