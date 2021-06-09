@@ -1,5 +1,6 @@
 package br.com.zupacademy.giovanna.proposta.servicosExternos.cartao;
 
+import br.com.zupacademy.giovanna.proposta.cartao.Cartao;
 import br.com.zupacademy.giovanna.proposta.proposta.Proposta;
 
 import java.time.LocalDateTime;

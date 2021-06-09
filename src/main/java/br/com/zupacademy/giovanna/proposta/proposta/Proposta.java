@@ -1,6 +1,6 @@
 package br.com.zupacademy.giovanna.proposta.proposta;
 
-import br.com.zupacademy.giovanna.proposta.servicosExternos.cartao.Cartao;
+import br.com.zupacademy.giovanna.proposta.cartao.Cartao;
 import br.com.zupacademy.giovanna.proposta.validations.CPFouCNPJ;
 import org.springframework.util.Assert;
 

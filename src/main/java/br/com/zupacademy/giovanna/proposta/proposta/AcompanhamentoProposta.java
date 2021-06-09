@@ -1,13 +1,7 @@
 package br.com.zupacademy.giovanna.proposta.proposta;
 
-import br.com.zupacademy.giovanna.proposta.servicosExternos.cartao.Cartao;
-import br.com.zupacademy.giovanna.proposta.servicosExternos.cartao.CartaoDetalhe;
+import br.com.zupacademy.giovanna.proposta.cartao.CartaoDetalhe;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public class AcompanhamentoProposta {

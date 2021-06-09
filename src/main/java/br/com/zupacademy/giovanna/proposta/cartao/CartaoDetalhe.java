@@ -1,4 +1,4 @@
-package br.com.zupacademy.giovanna.proposta.servicosExternos.cartao;
+package br.com.zupacademy.giovanna.proposta.cartao;
 import java.time.LocalDateTime;
 
 public class CartaoDetalhe {

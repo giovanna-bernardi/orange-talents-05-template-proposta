@@ -1,12 +1,14 @@
-package br.com.zupacademy.giovanna.proposta.servicosExternos.cartao;
+package br.com.zupacademy.giovanna.proposta.cartao;
 
 import br.com.zupacademy.giovanna.proposta.proposta.Proposta;
+import br.com.zupacademy.giovanna.proposta.biometria.Biometria;
 
 import javax.persistence.*;
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Cartao {
@@ -30,6 +32,10 @@ public class Cartao {
     @NotNull
     @OneToOne
     private Proposta proposta;
+
+    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
+    private List<Biometria> biometrias;
+
 //    private List<Bloqueio> bloqueios;
 //    private Vencimento vencimento;
 
@@ -45,6 +51,17 @@ public class Cartao {
         this.dataEmissao = dataEmissao;
         this.nomeTitular = nomeTitular;
         this.proposta = proposta;
+    }
+
+    public void associaBiometrias(List<Biometria> biometrias) {
+        biometrias.forEach(b -> b.setDataAssociacao(LocalDateTime.now()));
+        this.biometrias = new ArrayList<>();
+        this.biometrias.addAll(biometrias);
+    }
+
+
+    public Long getId() {
+        return id;
     }
 
     public String getNumeroCartao() {
