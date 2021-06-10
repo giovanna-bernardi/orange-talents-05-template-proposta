@@ -28,7 +28,7 @@ services:
       context: .
     container_name: proposta
     ports:
-      - 8080:8080
+      - 8081:8080
     restart: always
     depends_on:
       - mysql
@@ -38,8 +38,8 @@ services:
       ANALISE_FINANCEIRA_URL: http://analise:9999
       CARTAO_URL: http://contas:8888
       MYSQL_URL: jdbc:mysql://mysql/proposta
-      KEYCLOAK_ISSUER_URI: http://keycloak/auth/realms/nossa-proposta
-      KEYCLOAK_JWKS_URI: http://keycloak/auth/realms/nossa-proposta/protocol/openid-connect/certs
+      KEYCLOAK_ISSUER_URI: http://keycloak:8080/auth/realms/nossa-proposta
+      KEYCLOAK_JWKS_URI: http://keycloak:8080/auth/realms/nossa-proposta/protocol/openid-connect/certs
 
   mysql:
     image: mysql
@@ -91,6 +91,7 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: Pa55w0rd
       POSTGRES_PORT_5432_TCP_ADDR: 127.0.0.1
+#      KEYCLOAK_FRONTEND_URL: http://keycloak:8080/auth
 
   analise:
     image: 'zupacademy/analise-financeira'
