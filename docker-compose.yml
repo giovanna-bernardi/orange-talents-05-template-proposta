@@ -35,9 +35,11 @@ services:
       - analise
       - contas
     environment:
-      ANALISE_FINANCEIRA_URL: "http://analise:9999"
-      CARTAO_URL: "http://contas:8888"
+      ANALISE_FINANCEIRA_URL: http://analise:9999
+      CARTAO_URL: http://contas:8888
       MYSQL_URL: jdbc:mysql://mysql/proposta
+      KEYCLOAK_ISSUER_URI: http://keycloak/auth/realms/nossa-proposta
+      KEYCLOAK_JWKS_URI: http://keycloak/auth/realms/nossa-proposta/protocol/openid-connect/certs
 
   mysql:
     image: mysql
