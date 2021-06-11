@@ -5,6 +5,7 @@ import br.com.zupacademy.giovanna.proposta.servicosExternos.analiseFinanceira.An
 import br.com.zupacademy.giovanna.proposta.servicosExternos.analiseFinanceira.AnaliseFinanceiraRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import static br.com.zupacademy.giovanna.proposta.proposta.Proposta.*;

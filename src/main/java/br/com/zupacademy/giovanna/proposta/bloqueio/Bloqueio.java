@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 @Entity
 public class Bloqueio {
 
+    public enum StatusPedido {
+        ACEITO, AGUARDANDO
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

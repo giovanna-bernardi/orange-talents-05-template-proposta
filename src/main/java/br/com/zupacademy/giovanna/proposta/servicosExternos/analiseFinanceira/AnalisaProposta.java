@@ -21,6 +21,7 @@ public class AnalisaProposta {
             AnaliseFinanceiraResponse resultadoAvaliacao = client.verificaStatusSolicitante(pedidoAvaliacao);
             return resultadoAvaliacao.getResultadoSolicitacao();
         } catch (FeignException e) {
+            System.out.println(e.getMessage());
             if (e.status() == HttpStatus.UNPROCESSABLE_ENTITY.value()) {
                 String resultadoSolicitacao = Arrays.stream(e.getMessage().split(","))
                         .filter(m -> m.startsWith("\"resultadoSolicitacao\""))

@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 public class Cartao {
 
-    enum StatusCartao {
+    public enum StatusCartao {
         ATIVO, BLOQUEADO
     }
 
@@ -87,6 +87,10 @@ public class Cartao {
 
     public boolean estaBloqueado() {
         return status.equals(StatusCartao.BLOQUEADO);
+    }
+
+    public void setStatus(StatusCartao status) {
+        this.status = status;
     }
 
     public void bloqueia(String ipClient, String userAgentClient){
