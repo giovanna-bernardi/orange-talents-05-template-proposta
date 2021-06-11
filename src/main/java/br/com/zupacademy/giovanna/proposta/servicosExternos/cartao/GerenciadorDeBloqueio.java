@@ -1,12 +1,9 @@
 package br.com.zupacademy.giovanna.proposta.servicosExternos.cartao;
 
 import br.com.zupacademy.giovanna.proposta.bloqueio.*;
-import br.com.zupacademy.giovanna.proposta.proposta.Proposta;
 import feign.FeignException;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 @Component
 public class GerenciadorDeBloqueio {

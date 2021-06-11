@@ -4,6 +4,8 @@ import br.com.zupacademy.giovanna.proposta.cartao.Cartao;
 import br.com.zupacademy.giovanna.proposta.cartao.CartaoRepository;
 import br.com.zupacademy.giovanna.proposta.exceptions.ErrorResponse;
 import br.com.zupacademy.giovanna.proposta.servicosExternos.cartao.GerenciadorDeBloqueio;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -18,11 +20,14 @@ import java.util.Optional;
 @RestController
 public class BloqueioController {
 
+    private final MeterRegistry meterRegistry;
     private final CartaoRepository cartaoRepository;
     private final GerenciadorDeBloqueio gerenciadorDeBloqueio;
 
-    public BloqueioController(CartaoRepository cartaoRepository,
+    public BloqueioController(MeterRegistry meterRegistry,
+                              CartaoRepository cartaoRepository,
                               GerenciadorDeBloqueio gerenciadorDeBloqueio) {
+        this.meterRegistry = meterRegistry;
         this.cartaoRepository = cartaoRepository;
         this.gerenciadorDeBloqueio = gerenciadorDeBloqueio;
     }
@@ -38,6 +43,10 @@ public class BloqueioController {
 
         Cartao cartao = cartaoOptional.get();
 
+        Counter pedidoSucesso = meterRegistry.counter("pedido_bloqueio_sucesso");
+        Counter pedidoFalha = meterRegistry.counter("pedido_bloqueio_falha");
+
+
         boolean estaBloqueadoNoSistemaExterno = gerenciadorDeBloqueio.verificaCartaoBloqueadoSistemaExterno(cartao.getNumeroCartao());
         if(!cartao.estaBloqueado() && estaBloqueadoNoSistemaExterno){
             System.out.println("Cartão não estava bloqueado na nossa aplicação, mas já estava no sistema externo");
@@ -46,29 +55,34 @@ public class BloqueioController {
         }
 
         if (cartao.estaBloqueado()) {
+            pedidoSucesso.increment();
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                     .body(new ErrorResponse(Arrays.asList("O cartão já está bloqueado")));
         }
 
         String ipCliente = servletRequest.getRemoteAddr();
         if (!StringUtils.hasText(ipCliente)) {
+            pedidoFalha.increment();
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
                     .body(new ErrorResponse(Arrays.asList("IP vazio")));
         }
         String userAgentCliente = servletRequest.getHeader("User-Agent");
         if (!StringUtils.hasText(userAgentCliente)) {
+            pedidoFalha.increment();
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
                     .body(new ErrorResponse(Arrays.asList("Header User-Agent vazio")));
         }
 
         StatusBloqueio statusBloqueio = gerenciadorDeBloqueio.tentaBloquear(cartao.getNumeroCartao(), "propostas");
         if (statusBloqueio.equals(StatusBloqueio.FALHA)) {
+            pedidoFalha.increment();
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ErrorResponse(Arrays.asList("Não foi possível realizar o bloqueio do cartão")));
 
         }
 
         cartao.bloqueia(ipCliente, userAgentCliente);
         cartaoRepository.save(cartao);
+        pedidoSucesso.increment();
         return ResponseEntity.ok().body("Cartão bloqueado com sucesso");
 
     }
