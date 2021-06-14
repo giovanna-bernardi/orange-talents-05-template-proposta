@@ -35,7 +35,7 @@ public class BloqueioController {
     @PostMapping("/cartoes/{id}/bloqueios")
     public ResponseEntity<?> pedidoBloqueio(@PathVariable String id,
                                             HttpServletRequest servletRequest) {
-        Optional<Cartao> cartaoOptional = cartaoRepository.findByNumeroCartao(id);
+        Optional<Cartao> cartaoOptional = cartaoRepository.findById(id);
         if (cartaoOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse(Arrays.asList("Cartão não encontrado")));

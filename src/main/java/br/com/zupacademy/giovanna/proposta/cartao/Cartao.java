@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 public class Cartao {
@@ -19,8 +20,7 @@ public class Cartao {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id = UUID.randomUUID().toString();
 
     @NotBlank
     @Column(nullable = false)
@@ -69,7 +69,7 @@ public class Cartao {
     }
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

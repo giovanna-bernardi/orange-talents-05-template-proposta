@@ -30,7 +30,7 @@ public class BiometriaController {
                                                @PathVariable String id,
                                                UriComponentsBuilder uriComponentsBuilder) {
 
-        Optional<Cartao> cartao = cartaoRepository.findByNumeroCartao(id);
+        Optional<Cartao> cartao = cartaoRepository.findById(id);
         if(cartao.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(Arrays.asList("Cartão não encontrado")));
         }
