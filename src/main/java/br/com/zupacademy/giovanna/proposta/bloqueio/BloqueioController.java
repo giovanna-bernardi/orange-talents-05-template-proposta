@@ -77,7 +77,6 @@ public class BloqueioController {
         if (statusBloqueio.equals(StatusBloqueio.FALHA)) {
             pedidoFalha.increment();
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ErrorResponse(Arrays.asList("Não foi possível realizar o bloqueio do cartão")));
-
         }
 
         cartao.bloqueia(ipCliente, userAgentCliente);
