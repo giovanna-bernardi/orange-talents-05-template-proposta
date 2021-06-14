@@ -35,6 +35,10 @@ public class BiometriaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(Arrays.asList("Cartão não encontrado")));
         }
 
+        if(cartao.get().estaBloqueado()) {
+            return ResponseEntity.unprocessableEntity().body("O cartão está bloqueado");
+        }
+
         List<Biometria> biometrias = request.toModelList(cartao.get());
         cartao.get().associaBiometrias(biometrias);
         cartaoRepository.save(cartao.get());

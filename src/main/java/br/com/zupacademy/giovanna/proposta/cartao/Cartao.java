@@ -1,5 +1,6 @@
 package br.com.zupacademy.giovanna.proposta.cartao;
 
+import br.com.zupacademy.giovanna.proposta.aviso.AvisoViagem;
 import br.com.zupacademy.giovanna.proposta.bloqueio.Bloqueio;
 import br.com.zupacademy.giovanna.proposta.proposta.Proposta;
 import br.com.zupacademy.giovanna.proposta.biometria.Biometria;
@@ -47,6 +48,8 @@ public class Cartao {
     @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private List<Bloqueio> bloqueios = new ArrayList<>();
 
+    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
+    private List<AvisoViagem> avisosViagem = new ArrayList<>();
 
     @Deprecated
     public Cartao() {
@@ -102,4 +105,7 @@ public class Cartao {
         this.bloqueios.add(bloqueio);
     }
 
+    public void adicionaAvisosDeViagem(AvisoViagem aviso) {
+        this.avisosViagem.add(aviso);
+    }
 }
