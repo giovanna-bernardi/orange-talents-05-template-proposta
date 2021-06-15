@@ -24,6 +24,7 @@ public class CartaoValidoValidator implements ConstraintValidator<CartaoValido, 
         if(cartaoOptional.get().estaBloqueado()){
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("O cartão está bloqueado")
+                    .addPropertyNode("BLOQUEADO")
                     .addConstraintViolation();
             return false;
         }

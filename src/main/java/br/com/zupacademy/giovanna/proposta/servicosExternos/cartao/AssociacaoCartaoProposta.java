@@ -21,7 +21,7 @@ public class AssociacaoCartaoProposta {
     }
 
     @Scheduled(fixedDelayString = "${proposta.services.cartao.periodicidade}")
-    private void verificaNovosCartoes() {
+    public void verificaNovosCartoes() {
         System.out.println("Scheduler - verificando sistema de cartões");
         List<Proposta> propostasElegiveisSemCartao = propostaRepository.findByStatusAndCartaoNull(Proposta.StatusProposta.ELEGIVEL);
         if (propostasElegiveisSemCartao.isEmpty()) {

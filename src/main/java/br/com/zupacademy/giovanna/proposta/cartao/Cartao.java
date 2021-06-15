@@ -2,8 +2,6 @@ package br.com.zupacademy.giovanna.proposta.cartao;
 
 import br.com.zupacademy.giovanna.proposta.aviso.AvisoViagem;
 import br.com.zupacademy.giovanna.proposta.bloqueio.Bloqueio;
-import br.com.zupacademy.giovanna.proposta.carteira.Carteira;
-import br.com.zupacademy.giovanna.proposta.carteira.TipoCarteira;
 import br.com.zupacademy.giovanna.proposta.proposta.Proposta;
 import br.com.zupacademy.giovanna.proposta.biometria.Biometria;
 
@@ -52,9 +50,6 @@ public class Cartao {
 
     @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private List<AvisoViagem> avisosViagem = new ArrayList<>();
-
-//    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
-//    private List<Carteira> carteiras = new ArrayList<>();
 
     @Deprecated
     public Cartao() {
@@ -114,13 +109,4 @@ public class Cartao {
         this.avisosViagem.add(aviso);
     }
 
-//
-//    public boolean jaPossuiACarteira(TipoCarteira carteira) {
-//        return carteiras.stream().anyMatch(c -> c.getTipo().equals(carteira));
-//    }
-//
-//
-//    public void adicionaCarteira(Carteira carteira) {
-//        this.carteiras.add(carteira);
-//    }
 }

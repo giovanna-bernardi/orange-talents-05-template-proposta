@@ -45,6 +45,10 @@ public class ControllerAdviceHandler {
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException constraintViolationException) {
         String mensagem = constraintViolationException.getMessage().substring(constraintViolationException.getMessage().indexOf(":")+2);
 
+//        constraintViolationException.getConstraintViolations().forEach(f-> System.out.println(f.getPropertyPath()));
+//        constraintViolationException.getConstraintViolations().forEach(System.out::println);
+//        System.out.println(constraintViolationException.getMessage());
+
         ErrorResponse errorResponse = new ErrorResponse(Arrays.asList(mensagem));
         if(mensagem.equalsIgnoreCase("Cartão não encontrado")){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);

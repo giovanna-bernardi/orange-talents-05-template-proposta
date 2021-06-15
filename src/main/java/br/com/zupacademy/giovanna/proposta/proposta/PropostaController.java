@@ -5,6 +5,8 @@ import br.com.zupacademy.giovanna.proposta.servicosExternos.analiseFinanceira.An
 import br.com.zupacademy.giovanna.proposta.servicosExternos.analiseFinanceira.AnaliseFinanceiraRequest;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +23,16 @@ import java.util.*;
 public class PropostaController {
 
     private final MeterRegistry meterRegistry;
+    private final Tracer tracer;
     private final PropostaRepository propostaRepository;
     private final AnalisaProposta analisaProposta;
 
     public PropostaController(MeterRegistry meterRegistry,
+                              Tracer tracer,
                               PropostaRepository propostaRepository,
                               AnalisaProposta analisaProposta) {
         this.meterRegistry = meterRegistry;
+        this.tracer = tracer;
         this.propostaRepository = propostaRepository;
         this.analisaProposta = analisaProposta;
     }
@@ -38,6 +43,8 @@ public class PropostaController {
 
         Counter propostasElegiveis = meterRegistry.counter("proposta_elegivel");
         Counter propostasNaoElegiveis = meterRegistry.counter("proposta_nao_elegivel");
+
+        Span activeSpan = tracer.activeSpan();
 
         if (documentoJaExiste(request.getDocumento())) {
             ErrorResponse errorResponse = new ErrorResponse(Arrays.asList("Não é permitido mais de uma proposta para um mesmo solicitante"));
@@ -54,8 +61,14 @@ public class PropostaController {
 
         if(resultadoAvaliacao.equals(StatusProposta.ELEGIVEL)) {
             propostasElegiveis.increment();
+            activeSpan.setTag("status", "ELEGÍVEL");
+            activeSpan.setBaggageItem("status", "Elegível");
+            activeSpan.log("Meu log na proposta elegível");
         } else {
             propostasNaoElegiveis.increment();
+            activeSpan.setTag("status", "NÃO-ELEGÍVEL");
+            activeSpan.setBaggageItem("status", "Não-Elegível");
+            activeSpan.log("Meu log na proposta não-elegível");
         }
 
         URI uri = uriComponentsBuilder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri();
