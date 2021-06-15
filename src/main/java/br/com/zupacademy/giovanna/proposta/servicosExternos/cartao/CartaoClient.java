@@ -5,6 +5,8 @@ import br.com.zupacademy.giovanna.proposta.aviso.AvisoViagemResponse;
 import br.com.zupacademy.giovanna.proposta.bloqueio.BloqueioInfo;
 import br.com.zupacademy.giovanna.proposta.bloqueio.BloqueioRequest;
 import br.com.zupacademy.giovanna.proposta.bloqueio.BloqueioResponse;
+import br.com.zupacademy.giovanna.proposta.carteira.CarteiraRequest;
+import br.com.zupacademy.giovanna.proposta.carteira.CarteiraResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,4 +24,7 @@ public interface CartaoClient {
 
     @PostMapping("${proposta.services.cartao.cartoes}/{id}/${proposta.services.cartao.avisos}")
     AvisoViagemResponse atualizaAviso(@PathVariable String id, @RequestBody AvisoViagemRequest request);
+
+    @PostMapping("${proposta.services.cartao.cartoes}/{id}/${proposta.services.cartao.carteiras}")
+    CarteiraResponse associaACarteira(@PathVariable String id, @RequestBody CarteiraRequest request);
 }

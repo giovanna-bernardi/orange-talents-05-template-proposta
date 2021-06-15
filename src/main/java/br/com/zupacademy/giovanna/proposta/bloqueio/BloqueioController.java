@@ -4,11 +4,13 @@ import br.com.zupacademy.giovanna.proposta.cartao.Cartao;
 import br.com.zupacademy.giovanna.proposta.cartao.CartaoRepository;
 import br.com.zupacademy.giovanna.proposta.exceptions.ErrorResponse;
 import br.com.zupacademy.giovanna.proposta.servicosExternos.cartao.GerenciadorDeBloqueio;
+import br.com.zupacademy.giovanna.proposta.validations.ClientePreenchido;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +20,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @RestController
+@Validated
 public class BloqueioController {
 
     private final MeterRegistry meterRegistry;
@@ -34,7 +37,7 @@ public class BloqueioController {
 
     @PostMapping("/cartoes/{id}/bloqueios")
     public ResponseEntity<?> pedidoBloqueio(@PathVariable String id,
-                                            HttpServletRequest servletRequest) {
+                                            @ClientePreenchido HttpServletRequest servletRequest) {
         Optional<Cartao> cartaoOptional = cartaoRepository.findById(id);
         if (cartaoOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -61,17 +64,7 @@ public class BloqueioController {
         }
 
         String ipCliente = servletRequest.getRemoteAddr();
-        if (!StringUtils.hasText(ipCliente)) {
-            pedidoFalha.increment();
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
-                    .body(new ErrorResponse(Arrays.asList("IP vazio")));
-        }
         String userAgentCliente = servletRequest.getHeader("User-Agent");
-        if (!StringUtils.hasText(userAgentCliente)) {
-            pedidoFalha.increment();
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
-                    .body(new ErrorResponse(Arrays.asList("Header User-Agent vazio")));
-        }
 
         StatusBloqueio statusBloqueio = gerenciadorDeBloqueio.tentaBloquear(cartao.getNumeroCartao(), "propostas");
         if (statusBloqueio.equals(StatusBloqueio.FALHA)) {
