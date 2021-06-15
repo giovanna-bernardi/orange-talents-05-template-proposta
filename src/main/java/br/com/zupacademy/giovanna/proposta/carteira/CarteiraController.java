@@ -5,6 +5,7 @@ import br.com.zupacademy.giovanna.proposta.cartao.CartaoRepository;
 import br.com.zupacademy.giovanna.proposta.exceptions.ErrorResponse;
 import br.com.zupacademy.giovanna.proposta.servicosExternos.cartao.GerenciadorDeCarteira;
 import br.com.zupacademy.giovanna.proposta.validations.CartaoValido;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Arrays;
@@ -24,11 +26,14 @@ import java.util.Optional;
 public class CarteiraController {
 
     private final CartaoRepository cartaoRepository;
+    private final CarteiraRepository carteiraRepository;
     private final GerenciadorDeCarteira gerenciadorDeCarteira;
 
     public CarteiraController(CartaoRepository cartaoRepository,
+                              CarteiraRepository carteiraRepository,
                               GerenciadorDeCarteira gerenciadorDeCarteira) {
         this.cartaoRepository = cartaoRepository;
+        this.carteiraRepository = carteiraRepository;
         this.gerenciadorDeCarteira = gerenciadorDeCarteira;
     }
 
@@ -39,7 +44,7 @@ public class CarteiraController {
         Optional<Cartao> cartaoOptional = cartaoRepository.findById(id);
         Cartao cartao = cartaoOptional.get();
 
-        if(cartao.jaPossuiACarteira(request.getCarteira())){
+        if (cartaoJaPossuiACarteira(cartao, request.getCarteira())) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ErrorResponse(Arrays.asList("O cartão já possui a carteira '" + request.getCarteira() + "' associada a ele")));
         }
 
@@ -48,8 +53,7 @@ public class CarteiraController {
         if (carteiraResponse.isPresent() && carteiraResponse.get().associadaComSucesso()) {
             CarteiraResponse response = carteiraResponse.get();
             Carteira carteira = new Carteira(response.getId(), request.getCarteira(), cartao);
-            cartao.adicionaCarteira(carteira);
-            cartaoRepository.save(cartao);
+            carteiraRepository.save(carteira);
             URI uri = uriComponentsBuilder.path("/cartoes/{idCartao}/carteiras/{idCarteira}").buildAndExpand(cartao.getId(), carteira.getId()).toUri();
             return ResponseEntity.created(uri).build();
         }
@@ -57,4 +61,10 @@ public class CarteiraController {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ErrorResponse(Arrays.asList("Não foi possível associar a carteira " + request.getCarteira() + " ao cartão")));
 
     }
+
+    private boolean cartaoJaPossuiACarteira(Cartao cartao, TipoCarteira carteira) {
+        Optional<Carteira> carteiraOptional = carteiraRepository.findByCartaoIdAndTipo(cartao.getId(), carteira);
+        return carteiraOptional.isPresent();
+    }
+
 }

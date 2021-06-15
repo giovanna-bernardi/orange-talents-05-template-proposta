@@ -53,8 +53,8 @@ public class Cartao {
     @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private List<AvisoViagem> avisosViagem = new ArrayList<>();
 
-    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
-    private List<Carteira> carteiras = new ArrayList<>();
+//    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
+//    private List<Carteira> carteiras = new ArrayList<>();
 
     @Deprecated
     public Cartao() {
@@ -114,13 +114,13 @@ public class Cartao {
         this.avisosViagem.add(aviso);
     }
 
-
-    public boolean jaPossuiACarteira(TipoCarteira carteira) {
-        return carteiras.stream().anyMatch(c -> c.getTipo().equals(carteira));
-    }
-
-
-    public void adicionaCarteira(Carteira carteira) {
-        this.carteiras.add(carteira);
-    }
+//
+//    public boolean jaPossuiACarteira(TipoCarteira carteira) {
+//        return carteiras.stream().anyMatch(c -> c.getTipo().equals(carteira));
+//    }
+//
+//
+//    public void adicionaCarteira(Carteira carteira) {
+//        this.carteiras.add(carteira);
+//    }
 }
