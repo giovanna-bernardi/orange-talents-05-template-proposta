@@ -18,6 +18,10 @@ public class CartaoValidoValidator implements ConstraintValidator<CartaoValido, 
         Optional<Cartao> cartaoOptional = cartaoRepository.findById(value);
 
         if (cartaoOptional.isEmpty()) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("Cartão não encontrado")
+                    .addPropertyNode("INEXISTENTE")
+                    .addConstraintViolation();
             return false;
         }
 

@@ -1,5 +1,6 @@
 package br.com.zupacademy.giovanna.proposta.exceptions;
 
+import br.com.zupacademy.giovanna.proposta.validations.ValidationStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -8,11 +9,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @RestControllerAdvice
 public class ControllerAdviceHandler {
@@ -45,20 +44,17 @@ public class ControllerAdviceHandler {
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException constraintViolationException) {
         String mensagem = constraintViolationException.getMessage().substring(constraintViolationException.getMessage().indexOf(":")+2);
 
-//        constraintViolationException.getConstraintViolations().forEach(f-> System.out.println(f.getPropertyPath()));
-//        constraintViolationException.getConstraintViolations().forEach(System.out::println);
-//        System.out.println(constraintViolationException.getMessage());
-
+        Set<ConstraintViolation<?>> violations = constraintViolationException.getConstraintViolations();
         ErrorResponse errorResponse = new ErrorResponse(Arrays.asList(mensagem));
-        if(mensagem.equalsIgnoreCase("Cartão não encontrado")){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-        if(mensagem.equalsIgnoreCase("O cartão está bloqueado")){
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse);
-        }
 
-        if(mensagem.contains("IP vazio") || mensagem.equalsIgnoreCase("Header User-Agent vazio")){
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(errorResponse);
+        for(ConstraintViolation violation : violations) {
+            String errorCode = violation.getPropertyPath().toString().substring(violation.getPropertyPath().toString().lastIndexOf(".")+1);
+            ValidationStatus validationStatus = ValidationStatus.valueOf(errorCode);
+            if(validationStatus != null) {
+                HttpStatus status = validationStatus.getStatus();
+                return ResponseEntity.status(status).body(errorResponse);
+            }
+
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
