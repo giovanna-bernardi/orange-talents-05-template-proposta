@@ -1,7 +1,7 @@
 package br.com.zupacademy.giovanna.proposta.proposta;
 
 import br.com.zupacademy.giovanna.proposta.cartao.Cartao;
-import br.com.zupacademy.giovanna.proposta.validations.CPFouCNPJ;
+import br.com.zupacademy.giovanna.proposta.util.OfuscadorDeDadosConverter;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -22,7 +22,8 @@ public class Proposta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank @CPFouCNPJ
+    @NotBlank
+    @Convert(converter = OfuscadorDeDadosConverter.class)
     @Column(nullable = false)
     private String documento;
 
@@ -55,7 +56,7 @@ public class Proposta {
     public Proposta() {
     }
 
-    public Proposta(@NotBlank @CPFouCNPJ String documento,
+    public Proposta(@NotBlank String documento,
                     @NotBlank @Email String email,
                     @NotBlank String nome,
                     @NotBlank String endereco,
