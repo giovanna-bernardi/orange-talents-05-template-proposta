@@ -16,8 +16,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.headers().httpStrictTransportSecurity().disable();
         http.authorizeRequests(authorizeRequests ->
                 authorizeRequests
-                        .antMatchers("/**").hasAuthority("SCOPE_propostas")
-                        .anyRequest().authenticated())
+                        .antMatchers("/propostas/**").hasAuthority("SCOPE_propostas")
+                        .antMatchers("/cartoes/**").hasAuthority("SCOPE_propostas")
+                        .antMatchers(HttpMethod.GET, "/actuator/**").permitAll())
+//                        .anyRequest().authenticated())
 //                        .anyRequest().permitAll())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
