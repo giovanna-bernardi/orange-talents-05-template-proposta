@@ -15,6 +15,7 @@ public class ClientePreenchidoValidator implements ConstraintValidator<ClientePr
         String ipCliente = value.getRemoteAddr();
         if (!StringUtils.hasText(ipCliente)) {
             context.buildConstraintViolationWithTemplate("IP vazio")
+                    .addPropertyNode(ValidationStatus.IP_VAZIO.name())
                     .addConstraintViolation();
             return false;
         }
@@ -22,6 +23,7 @@ public class ClientePreenchidoValidator implements ConstraintValidator<ClientePr
         String userAgentCliente = value.getHeader("User-Agent");
         if (!StringUtils.hasText(userAgentCliente)) {
             context.buildConstraintViolationWithTemplate("Header User-Agent vazio")
+                    .addPropertyNode(ValidationStatus.USER_AGENT_VAZIO.name())
                     .addConstraintViolation();
             return false;
         }

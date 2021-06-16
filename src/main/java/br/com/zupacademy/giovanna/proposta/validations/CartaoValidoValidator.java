@@ -20,7 +20,7 @@ public class CartaoValidoValidator implements ConstraintValidator<CartaoValido, 
         if (cartaoOptional.isEmpty()) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("Cartão não encontrado")
-                    .addPropertyNode("INEXISTENTE")
+                    .addPropertyNode(ValidationStatus.INEXISTENTE.name())
                     .addConstraintViolation();
             return false;
         }
@@ -28,7 +28,7 @@ public class CartaoValidoValidator implements ConstraintValidator<CartaoValido, 
         if(cartaoOptional.get().estaBloqueado()){
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("O cartão está bloqueado")
-                    .addPropertyNode("BLOQUEADO")
+                    .addPropertyNode(ValidationStatus.BLOQUEADO.name())
                     .addConstraintViolation();
             return false;
         }
